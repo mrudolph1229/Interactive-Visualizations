@@ -24,13 +24,14 @@ function buildCharts(sample) {
   d3.json(`/samples/${sample}`).then(function(response) {
   
     // @TODO: Build a Bubble Chart using the sample data
-    var trace= [{
-      "x": response['otu_ids'],
-      "y": response['sample_values'],
-      "labels": response['otu_labels'],
-      "type": "scatter",
-      "mode": "markers",
-      "marker": {size: response['sample_values']}
+    var trace = []
+    trace= [{
+      x: response['otu_ids'],
+      y: response['sample_values'],
+      labels: response['otu_labels'],
+      type: "scatter",
+      mode: "markers",
+      marker: {size: response['sample_values'], color: response['otu_ids']}
     }]
     var layout= [{
       title: "Biodiversity of Selected Sample",
@@ -55,6 +56,23 @@ function buildCharts(sample) {
     var dataArraySorted = dataArray.sort((a, b) =>
       parseFloat(b.sample_values) - parseFloat(a.sample_values)
     );
+
+    var trace1 = []
+
+    trace1 = [{
+      labels: dataArraySorted.map (d => d.otu_ids).slice(0,10),
+      values: dataArraySorted.map (d => d.sample_values).slice(0,10),
+      text: dataArraySorted.map (d => d.otu_labels).slice(0,10),
+      type: "pie"
+    }]
+        
+    layout1 = [{
+      title: "Top 10 Samples"
+    }]
+
+    var tag1 = document.getElementById("pie")
+
+    Plotly.plot(tag1, trace1, layout1)
   })
 }  
 
